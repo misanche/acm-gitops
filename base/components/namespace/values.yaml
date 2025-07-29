@@ -1,0 +1,21 @@
+namespaces:
+  namespace-creation-test:
+    annotations:
+    labels:
+      label1: test
+      apmId: '98512'
+    limit_range:
+      - type: Container
+        default:
+          cpu: 512m
+          memory: 512Mi
+        defaultRequest:
+          cpu: 100m
+          memory: 200Mi
+    resource_quota:
+      configmaps: 100
+      persistentvolumeclaims: 100
+      replicationcontrollers: 100
+      secrets: 100
+      services: 100
+      services.loadbalancers: 100

@@ -1,0 +1,36 @@
+# branch: &branch main
+# sync_policy_true: &sync_policy_true
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#     - Validate=true
+
+# applications:
+#   app1:
+#     enabled: true
+#     source: https://github.com/redhat/gitops.git
+#     source_path: base/components/app1
+#     source_ref: *branch
+#     sync_policy: *sync_policy_true
+#     namespace: cluster-ops
+#     destination: app1
+#     values:
+#       userMetrics: true
+#   app2:
+#     enabled: true
+#     sources:
+#       - repoURL: https://github.com/redhat/gitops-gitops.git
+#         helm:
+#           releaseName: namespace
+#           valueFiles:
+#           - $values/clusters/cluster/servicemeshcluster1/namespaces-multirepo.yaml
+#         path: charts/namespace
+#         targetRevision: feature22966
+#       - repoURL: https://github.com/redhat/gitops.git
+#         targetRevision: feature22966
+#         ref: values
+#     sync_policy: *sync_policy_true
+#     namespace: cluster-ops
+#     destination: cluster-ops

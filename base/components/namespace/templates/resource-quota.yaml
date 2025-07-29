@@ -1,0 +1,23 @@
+{{- range $name, $namespace := $.Values.namespaces }} 
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: max-object-counts
+  namespace: {{ $name | quote}}
+spec:
+  hard:
+  {{- if and $namespace $namespace.resource_quota }}
+    {{- $namespace.resource_quota | toYaml | nindent 4 -}}
+  {{ else }}
+    #configMaps: "1000" 
+    persistentvolumeclaims: "10" 
+    pods: "100"
+    requests.storage: 1000Gi
+    services.nodeports: "0"
+    #replicationControllers: "1000" 
+    #secrets: "1000" 
+    #services: "1000" 
+    #services.loadBalancers: "1000"
+  {{- end }}
+{{- end }}

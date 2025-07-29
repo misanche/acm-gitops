@@ -1,0 +1,62 @@
+{{- if .Values.applications }}
+{{- range $name, $app := .Values.applications }}
+{{- if $app.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+{{- if not $app.disable_app_finalizer }}
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+{{- end }}
+  namespace: {{ $app.namespace | default "cluster-ops" }}
+  {{- if $.Values.clusterName }}
+  name: "{{ $name }}-{{ $.Values.clusterName }}"
+  {{ else }}
+  name: {{ $name }}
+  {{- end }}
+spec:
+  destination:
+    namespace: {{ $app.destination | default "cluster-ops" }}
+    {{- if $app.cluster_api }}
+    server: {{ $app.cluster_api }}
+    {{ else }}
+    server: {{ $.Values.api | default "https://kubernetes.default.svc" }}
+    {{- end }}
+  project: {{ $app.project | default "default" }}
+{{- if $app.sources }}
+  sources:
+    {{- toYaml $app.sources | nindent 4 }}
+{{- else }}
+  source:
+{{- if not $app.no_helm }}
+    helm:
+      releaseName: {{ $name }}
+{{- if $app.helm_values }}
+      valueFiles:
+{{- toYaml $app.helm_values | nindent 8 }}
+{{- end }}
+{{- if $app.values }}
+      values: |
+{{- toYaml $app.values | nindent 8 }}
+{{- end }}
+{{- end }}
+    {{- if $app.source_path }}
+    path: {{ $app.source_path }}
+    {{- end }}
+    repoURL: {{ $app.source }}
+    targetRevision: {{ $app.source_ref | default "master" }}
+    {{- if $app.chart_name }}
+    chart: {{ $app.chart_name }}
+    {{- end }}
+{{- end -}}
+{{- if $app.sync_policy }}
+{{- toYaml $app.sync_policy | nindent 2 }}
+{{- end }}
+{{- if $app.ignore_differences}}
+  ignoreDifferences:
+{{ toYaml $app.ignore_differences | indent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

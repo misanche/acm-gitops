@@ -1,0 +1,10 @@
+apiVersion: v2
+name: namespace
+description: Creates the desired namespaces.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+version: 1.0.0
+
+# This is the version number of the application being deployed. This version number should be incremented each time you make changes
+appVersion: 1.0.0

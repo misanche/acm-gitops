@@ -1,0 +1,30 @@
+{{- range $name, $namespace := $.Values.namespaces }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $name | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+    {{- if and $namespace $namespace.description }}
+    openshift.io/description: {{ $namespace.description }}
+    {{- end }}
+    {{- if and $namespace $namespace.displayName }}
+    openshift.io/display-name: {{ $namespace.displayName }}
+    {{- end }}
+    {{- if and $namespace $namespace.requester }}
+    openshift.io/requester: {{ $namespace.requester }}
+    {{- end }}
+  {{- if and $namespace $namespace.displayName }}
+  {{- range $k,$v := $namespace.annotations }}
+    {{ $k }}: {{ $v | quote }}
+  {{- end }}
+  {{- end }}
+  labels:
+    argocd.argoproj.io/managed-by: openshift-gitops
+  {{- if and $namespace $namespace.labels }}
+  {{- range $k,$v := $namespace.labels }}
+    {{ $k }}: {{ $v | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}
