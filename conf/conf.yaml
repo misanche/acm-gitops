@@ -15,7 +15,7 @@ applications:
     source_path: base/components/namespace
     source_ref: *branch
     sync_policy: *sync_policy_true
-    namespace: cluster-ops
+    namespace: openshift-gitops
     values:
       namespaces:
         pro:
