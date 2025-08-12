@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-config
+  namespace: openshift-gitops
+spec:
+  generators:
+  - matrix:
+      generators:
+      - merge:
+          generators:
+          - clusterDecisionResource:
+              configMapRef: acm-placement
+              labelSelector:
+                matchLabels:
+                  cluster.open-cluster-management.io/placement: gitops
+          - clusters: {}
+          mergeKeys:
+          - server
+      - list:
+          elements:
+            - template: app-of-apps
+  template:
+    metadata:
+      name: "cluster-{{clusterName}}-config"
+      labels:
+        environment: "{{metadata.labels.environment}}" 
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/misanche/acm-gitops.git
+        targetRevision: "main"
+        path: base/components/{{template}}
+        helm:
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - /conf/{{metadata.labels.environment}}/conf.yaml
+      destination:
+        server: "{{server}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - Validate=true
