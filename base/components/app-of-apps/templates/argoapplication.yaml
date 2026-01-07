@@ -9,7 +9,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 {{- end }}
-  namespace: {{ $app.namespace | default "cluster-ops" }}
+  namespace: {{ $app.namespace | default "openshift-gitops" }}
   {{- if $.Values.clusterName }}
   name: "{{ $name }}-{{ $.Values.clusterName }}"
   {{ else }}
@@ -17,7 +17,7 @@ metadata:
   {{- end }}
 spec:
   destination:
-    namespace: {{ $app.destination | default "cluster-ops" }}
+    namespace: {{ $app.destination | default "openshift-gitops" }}
     {{- if $app.cluster_api }}
     server: {{ $app.cluster_api }}
     {{ else }}
